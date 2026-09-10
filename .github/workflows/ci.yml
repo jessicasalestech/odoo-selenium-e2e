@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  selenium-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Provision Odoo 17 + Postgres 16 (Docker Compose)
+        run: |
+          docker compose up -d
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8069/web/login >/dev/null 2>&1; then
+              echo "::notice::Odoo is ready after ${i} tries"
+              break
+            fi
+            echo "waiting for Odoo (attempt ${i}/60)..."
+            sleep 5
+          done
+          docker compose ps
+
+      - name: Sanity check the ERP login page
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8069/web/login)
+          echo "Odoo /web/login returned HTTP $code"
+          test "$code" = "200"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          google-chrome --version
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Selenium E2E tests (headless Chrome -> Odoo)
+        env:
+          BASE_URL: http://localhost:8069
+          ODOO_USER: admin
+          ODOO_PASSWORD: admin
+        run: pytest -v --tb=short
+
+      - name: Upload failure artifacts (screenshots / page snapshots)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-screenshots
+          path: screenshots/
+          if-no-files-found: ignore

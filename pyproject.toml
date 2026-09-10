@@ -1,0 +1,15 @@
+[project]
+name = "odoo-selenium-e2e"
+version = "0.1.0"
+description = "Selenium + pytest + Page Object Model E2E suite against the open-source Odoo ERP (v17)."
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
+markers = [
+    "e2e: end-to-end tests that require a live Odoo instance (Docker/CI)",
+    "unit: browserless coherence checks of the Page Object layer",
+]
