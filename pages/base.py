@@ -28,31 +28,34 @@ class BasePage:
         return self
 
     # -- lookup helpers ------------------------------------------------------
-    def find_visible(self, by, value: str) -> WebElement:
+    # Every method takes a Selenium locator tuple ``(By, value)`` exactly as it
+    # is declared on the page objects (e.g. ``(By.CSS_SELECTOR, "input[name=..]")``).
+    def find_visible(self, locator) -> WebElement:
         """Wait for a visible element, then return it (raises TimeoutException)."""
-        return self.wait.until(EC.visibility_of_element_located((by, value)))
+        return self.wait.until(EC.visibility_of_element_located(locator))
 
-    def find_present(self, by, value: str) -> WebElement:
+    def find_present(self, locator) -> WebElement:
         """Wait for an element to exist in the DOM, then return it."""
-        return self.wait.until(EC.presence_of_element_located((by, value)))
+        return self.wait.until(EC.presence_of_element_located(locator))
 
-    def find_present_all(self, by, value: str) -> list[WebElement]:
+    def find_present_all(self, locator) -> list[WebElement]:
         """Wait until at least one matching element exists, then return all."""
-        self.wait.until(EC.presence_of_element_located((by, value)))
+        self.wait.until(EC.presence_of_element_located(locator))
+        by, value = locator
         return self.driver.find_elements(by, value)
 
-    def find_clickable(self, by, value: str) -> WebElement:
+    def find_clickable(self, locator) -> WebElement:
         """Wait for an element to be visible and enabled (clickable)."""
-        return self.wait.until(EC.element_to_be_clickable((by, value)))
+        return self.wait.until(EC.element_to_be_clickable(locator))
 
-    def click(self, by, value: str) -> "BasePage":
+    def click(self, locator) -> "BasePage":
         """Wait for and click an element."""
-        self.find_clickable(by, value).click()
+        self.find_clickable(locator).click()
         return self
 
-    def type_text(self, by, value: str, text: str, clear: bool = True) -> "BasePage":
+    def type_text(self, locator, text: str, clear: bool = True) -> "BasePage":
         """Wait for an input, optionally clear it, then type ``text``."""
-        element = self.find_visible(by, value)
+        element = self.find_visible(locator)
         if clear:
             element.clear()
         element.send_keys(text)
