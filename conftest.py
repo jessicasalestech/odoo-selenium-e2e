@@ -90,7 +90,7 @@ def pytest_runtest_makereport(item, call):
     """Capture a screenshot + page source whenever a test fails."""
     outcome = yield
     report = outcome.get_result()
-    if report.when == "call" and report.failed:
+    if report.when in ("setup", "call", "teardown") and report.failed:
         driver = _current_driver(item)
         if driver is None:
             return

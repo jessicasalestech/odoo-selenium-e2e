@@ -50,6 +50,11 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
+      - name: Diagnose Odoo state after login (selectors evidence)
+        env:
+          BASE_URL: http://localhost:8069
+        run: python scripts/diagnose.py
+
       - name: Run Selenium E2E tests (headless Chrome -> Odoo)
         env:
           BASE_URL: http://localhost:8069
@@ -58,9 +63,9 @@ jobs:
         run: pytest -v --tb=short
 
       - name: Upload failure artifacts (screenshots / page snapshots)
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: selenium-screenshots
+          name: selenium-diagnostics
           path: screenshots/
           if-no-files-found: ignore
