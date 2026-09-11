@@ -44,7 +44,7 @@ def test_login_page_publishes_working_locators():
 
 def test_dashboard_page_publishes_working_locators():
     locators = _locator_attributes(DashboardPage)
-    assert {"APPS_MENU", "USER_MENU", "APP_TILES", "CONTACTS_TILE"} <= set(locators)
+    assert {"APPS_MENU", "USER_MENU", "MAIN_MENU", "APP_TILES"} <= set(locators)
     for by_, _value in locators.values():
         assert by_ in _ALLOWED_BY
 

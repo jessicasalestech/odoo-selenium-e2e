@@ -7,30 +7,30 @@ from pages.contacts_page import ContactsPage
 
 
 class DashboardPage(BasePage):
-    """The post-login landing page and the Applications/home dashboard.
+    """The post-login landing page and web-client chrome.
 
-    In Odoo the home dashboard renders every installed app as a tile. The
-    top application menu (four-square switcher) is keyed by ``o_menu_brand``
-    and the account menu by ``o_user_menu``.
+    Selectors below are aligned with the REAL Odoo 17 DOM (verified against a
+    live instance): the top navigation bar is ``nav.o_main_navbar``, the app
+    switcher button lives in ``.o_navbar_apps_menu`` and the account menu is
+    ``.o_user_menu``.
     """
 
     # Top navigation chrome ------------------------------------------------
-    APPS_MENU = (By.CSS_SELECTOR, "button.o_menu_brand")
-    USER_MENU = (By.CSS_SELECTOR, "button.o_user_menu, .o_user_menu")
-    MAIN_MENU = (By.CSS_SELECTOR, ".o_topbar .breadcrumb, .o_menu_brand, nav.o_main_navbar")
+    APPS_MENU = (By.CSS_SELECTOR, ".o_navbar_apps_menu button.dropdown-toggle")
+    USER_MENU = (By.CSS_SELECTOR, "div.o_user_menu button.dropdown-toggle, .o_user_menu button")
+    MAIN_MENU = (By.CSS_SELECTOR, "nav.o_main_navbar")
 
-    # Applications dashboard tiles ------------------------------------------
+    # Applications dashboard tiles (present on the home / apps board). ------
     APP_TILES = (By.CSS_SELECTOR, ".o_app")
-    CONTACTS_TILE = (By.CSS_SELECTOR, ".o_app[data-menu-xmlid*='contacts'], a.o_app[href*='contacts']")
 
     def open(self) -> "DashboardPage":
-        """Navigate straight to the Odoo home/dashboard."""
+        """Navigate to the Odoo web client (lands on the last app / home)."""
         super().open("/web")
         return self
 
     def is_dashboard_loaded(self) -> bool:
-        """True once the top application chrome is present."""
-        self.find_present(self.APPS_MENU)
+        """True once the top navigation bar is present."""
+        self.find_present(self.MAIN_MENU)
         return True
 
     def is_user_logged_in(self) -> bool:
@@ -39,16 +39,19 @@ class DashboardPage(BasePage):
         return True
 
     def wait_for_app_tiles(self) -> int:
-        """Return how many application tiles the dashboard shows."""
+        """Return how many application tiles the dashboard shows (home board)."""
         return len(self.find_present_all(self.APP_TILES))
 
-    def open_apps_menu(self) -> "DashboardPage":
-        """Open the application switcher menu, if present."""
-        if self.find_present_all(self.APPS_MENU):
-            self.click(self.APPS_MENU)
+    def open_app(self, name: str) -> "DashboardPage":
+        """Open the app switcher dropdown and click the app named ``name``."""
+        self.click(self.APPS_MENU)
+        item = self.find_clickable(
+            (By.XPATH, f"//a[contains(normalize-space(.), '{name}')]")
+        )
+        item.click()
         return self
 
     def goto_contacts(self) -> ContactsPage:
-        """Click the Contacts application tile."""
-        self.click(self.CONTACTS_TILE)
+        """Switch to the Contacts application via the app switcher."""
+        self.open_app("Contacts")
         return ContactsPage(self.driver, self.base_url)

@@ -42,6 +42,11 @@ class ContactsPage(BasePage):
         super().open("/web#cids=1&menu_id=0&action=contacts.contacts_list_action")
         return self
 
+    def is_list_view_loaded(self) -> bool:
+        """True once the Contacts list view (search bar) is rendered."""
+        self.find_visible(self.SEARCH_INPUT)
+        return True
+
     # -- list view -----------------------------------------------------------
     def search(self, term: str) -> "ContactsPage":
         """Type into the search box and commit the search."""
