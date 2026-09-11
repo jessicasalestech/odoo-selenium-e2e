@@ -18,7 +18,7 @@ class ContactsPage(BasePage):
         By.CSS_SELECTOR,
         "button[name='new'], button[data-title='New'], .o_list_button_add",
     )
-    LIST_ROWS = (By.CSS_SELECTOR, "tr.o_data_row")
+    LIST_ROWS = (By.CSS_SELECTOR, ".o_kanban_record, tr.o_data_row")
 
     # Form view chrome ------------------------------------------------------
     NAME_INPUT = (By.CSS_SELECTOR, "input[name='name']")

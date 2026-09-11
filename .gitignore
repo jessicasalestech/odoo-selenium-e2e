@@ -21,6 +21,8 @@ drivers/
 # Test output (screenshots + page snapshots on failure)
 # ---------------------------------------------------------------------------
 screenshots/
+.diag/
+.diag2/
 
 # ---------------------------------------------------------------------------
 # Local environment
