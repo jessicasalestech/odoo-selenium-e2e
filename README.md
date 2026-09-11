@@ -1,5 +1,7 @@
 # Odoo Selenium E2E
 
+[![English](https://img.shields.io/badge/English-blue?style=plastic&logo=openbadges&logoColor=white)](README.md) [![Português](https://img.shields.io/badge/Portugu%C3%AAs-green?style=plastic&logo=openbadges&logoColor=white)](README-pt-BR.md)
+
 [![CI](https://github.com/jessicasalestech/odoo-selenium-e2e/actions/workflows/ci.yml/badge.svg)](https://github.com/jessicasalestech/odoo-selenium-e2e/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/)
 [![Selenium](https://img.shields.io/badge/selenium-4.x-green)](https://www.selenium.dev/)
