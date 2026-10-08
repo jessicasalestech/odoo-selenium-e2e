@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 25
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Provision Odoo 17 + Postgres 16 (Docker Compose)
         run: |
@@ -34,7 +34,7 @@ jobs:
           test "$code" = "200"
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload failure artifacts (screenshots / page snapshots)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: selenium-diagnostics
           path: screenshots/
